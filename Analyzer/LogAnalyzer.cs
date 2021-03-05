@@ -24,10 +24,21 @@ namespace Analyzer
                 Console.WriteLine($"\n** {log.Name} **");
                 string path = $"{log.Directory}\\{log.Name}";
                 FileStats stats = ScanFile(path);
-                Console.WriteLine($"SHARES: {stats.Shares}");
-                Console.WriteLine($"Время работы (дни.часы:минуты:секунды): {stats.WorkTime}");
-                allShares += stats.GetSharesInInterval(startTime, endTime);
-                allTime += stats.WorkTime;
+
+                int shares = stats.GetSharesInInterval(startTime, endTime);
+                TimeSpan workTime = stats.GetWorkTimeInInterval(startTime, endTime);
+                if (stats.IsInInterval(startTime))
+                {
+                    Console.WriteLine($"SHARES: {shares}");
+                    Console.WriteLine($"Время работы (дни.часы:минуты:секунды): {workTime}");
+                    allShares += shares;
+                    allTime += workTime;
+                }
+                else
+                {
+                    Console.WriteLine("Данный файл не совпадает с интервалом");
+                }
+
                 Console.WriteLine("===============================");
             }
 
@@ -134,6 +145,18 @@ class FileStats
     public TimeSpan WorkTime => _endTime - _startTime;
     public int Shares => _shares.Count;
 
+    public bool IsInInterval(DateTime start)
+    {
+        return start < _endTime;
+    }
+    
+    public TimeSpan GetWorkTimeInInterval(DateTime start, DateTime end)
+    {
+        DateTime resStart = _startTime > start ? _startTime : start;
+        DateTime resEnd = _endTime > end ? end : _endTime;
+        return resEnd - resStart;
+    } 
+        
     public int GetSharesInInterval(DateTime start, DateTime end)
     {
         return _shares.Count(share => share.CreationTime >= start && share.CreationTime <= end);
