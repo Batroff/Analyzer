@@ -14,6 +14,9 @@ namespace Analyzer
             LogAnalyzer logAnalyzer = new LogAnalyzer();
             logAnalyzer.Start(logs);
 
+            Console.WriteLine();
+            Console.WriteLine("==============================================");
+            Console.WriteLine("Для завершения работы нажмите любую клавишу...");
             Console.ReadKey(true);
         }
     }
