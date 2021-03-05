@@ -12,7 +12,6 @@ namespace Analyzer
         public FileGetter()
         {
             _logs = new List<FileInfo>();
-
         }
 
         private void ImportLogs()
@@ -25,7 +24,7 @@ namespace Analyzer
                     if (chunkDir.Name.Contains("old") || !chunkDir.Name.Contains("chunk"))
                         continue;
                     
-                    foreach (FileInfo file in _dir.GetFiles())
+                    foreach (FileInfo file in chunkDir.GetFiles())
                     {
                         if (file.Name.Contains("log")) _logs.Add(file);
                     }
@@ -47,7 +46,6 @@ namespace Analyzer
             {
                 Console.WriteLine(e);
             }
-            
         }
         
         public List<FileInfo> GetLogs()
