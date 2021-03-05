@@ -29,7 +29,6 @@ namespace Analyzer
             Console.WriteLine("** Всего **");
             Console.WriteLine($"SHARES: {allShares}");
             Console.WriteLine($"Время работы (дни.часы:минуты:секунды): {allTime}");
-
         }
 
         private DateTime ConvertToDate(string date)
