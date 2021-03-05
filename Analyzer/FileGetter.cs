@@ -20,10 +20,20 @@ namespace Analyzer
             try
             {
                 _dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\logs");
+                foreach (DirectoryInfo chunkDir in _dir.GetDirectories())
+                {
+                    if (chunkDir.Name.Contains("old") || !chunkDir.Name.Contains("chunk"))
+                        continue;
+                    
+                    foreach (FileInfo file in _dir.GetFiles())
+                    {
+                        if (file.Name.Contains("log")) _logs.Add(file);
+                    }
+                }
                 foreach (FileInfo file in _dir.GetFiles())
                 {
-                    if (file.Name.StartsWith("log")) _logs.Add(file);
-                } 
+                    if (file.Name.Contains("log")) _logs.Add(file);
+                }
 
                 Console.WriteLine("===============================");
                 Console.WriteLine("Найденные логи:");

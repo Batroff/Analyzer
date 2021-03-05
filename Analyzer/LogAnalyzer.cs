@@ -32,16 +32,16 @@ namespace Analyzer
 
         }
 
-        private TimeSpan ConvertToDate(string date)
+        private DateTime ConvertToDate(string date)
         {
-            // int year = Convert.ToInt32(date.Substring(0, 4));
-            // int month = Convert.ToInt32(date.Substring(4, 2));
+            int year = Convert.ToInt32(date.Substring(0, 4));
+            int month = Convert.ToInt32(date.Substring(4, 2));
             int day = Convert.ToInt32(date.Substring(6, 2));
             int hour = Convert.ToInt32(date.Substring(9, 2));
             int min = Convert.ToInt32(date.Substring(12, 2));
             int sec = Convert.ToInt32(date.Substring(15, 2));
 
-            return new TimeSpan(day, hour, min, sec);
+            return new DateTime(year, month, day, hour, min, sec);
         }
 
         private FileStats ScanFile(string path)
@@ -56,8 +56,8 @@ namespace Analyzer
                     string line = streamReader.ReadLine();
 
                     bool foundStart = false;
-                    TimeSpan startTime = TimeSpan.Zero;
-                    TimeSpan endTime = TimeSpan.Zero;
+                    DateTime startTime = DateTime.MinValue;
+                    DateTime endTime = DateTime.MinValue;
 
                     while (!string.Equals(line, null, StringComparison.CurrentCultureIgnoreCase))
                     {
