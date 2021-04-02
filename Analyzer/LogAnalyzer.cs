@@ -18,10 +18,10 @@ namespace Analyzer
 
             DateTime startTime = InputTime("Дата начала поиска", DateTime.MinValue);
             DateTime endTime = InputTime("Дата конца поиска", DateTime.MaxValue);
+            List<string> unmatchedLogs = new List<string>();
             
             foreach (FileInfo log in logs)
             {
-                Console.WriteLine($"\n** {log.Name} **");
                 string path = $"{log.Directory}\\{log.Name}";
                 FileStats stats = ScanFile(path);
 
@@ -29,18 +29,20 @@ namespace Analyzer
                 TimeSpan workTime = stats.GetWorkTimeInInterval(startTime, endTime);
                 if (stats.IsInInterval(startTime))
                 {
+                    Console.WriteLine($"\n** {log.Name} **");
                     Console.WriteLine($"SHARES: {shares}");
                     Console.WriteLine($"Время работы (дни.часы:минуты:секунды): {workTime}");
                     allShares += shares;
                     allTime += workTime;
+                    Console.WriteLine("===============================");
                 }
                 else
                 {
-                    Console.WriteLine("Данный файл не совпадает с интервалом");
+                    unmatchedLogs.Add(log.Name);
                 }
-
-                Console.WriteLine("===============================");
             }
+
+            Console.WriteLine("Не совпадают с данным интервалом: " + String.Join(", ", unmatchedLogs));
 
             Console.WriteLine();
             Console.WriteLine("** Всего **");
