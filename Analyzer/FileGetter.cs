@@ -1,21 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Analyzer
 {
+    // TODO: Add custom exceptions
+    public class ImportLogsException : IOException
+    {
+        public ImportLogsException(string message) : base(message) { }
+    }
+
     public class FileGetter
     {
         private DirectoryInfo _dir;
-        private List<FileInfo> _logs;
+        public List<FileInfo> Logs { get; }
+        private CliFormatter _cliFormatter;
 
         public FileGetter()
         {
-            _logs = new List<FileInfo>();
+            Logs = new List<FileInfo>();
         }
 
-        private void ImportLogs()
+        public void ImportLogs()
         {
+            IEnumerable<FileInfo> FindLogs(FileInfo[] files) =>
+                files.Select(file => file).Where(file => file.Name.Contains("log"));
+            
             try
             {
                 _dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\logs");
@@ -23,35 +33,19 @@ namespace Analyzer
                 {
                     if (chunkDir.Name.Contains("old") || !chunkDir.Name.Contains("chunk"))
                         continue;
-                    
-                    foreach (FileInfo file in chunkDir.GetFiles())
-                    {
-                        if (file.Name.Contains("log")) _logs.Add(file);
-                    }
+                 
+                    Logs.AddRange(FindLogs(chunkDir.GetFiles()));
                 }
-                foreach (FileInfo file in _dir.GetFiles())
-                {
-                    if (file.Name.Contains("log")) _logs.Add(file);
-                }
+                
+                Logs.AddRange(FindLogs(_dir.GetFiles()));
 
-                Console.WriteLine("===============================");
-                Console.WriteLine("Найденные логи:");
-                foreach (var log in _logs)
-                {
-                    Console.WriteLine(log.Name);
-                }
-                Console.WriteLine("===============================");
+                _cliFormatter = new CliFormatter(Logs, false);
+                _cliFormatter.PrintFoundLogs();
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
+                throw new ImportLogsException("An error ImportLogsException occured in method ImportLogs");
             }
-        }
-        
-        public List<FileInfo> GetLogs()
-        {
-            ImportLogs();
-            return _logs;
         }
     }
 }
